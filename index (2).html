@@ -893,4 +893,45 @@
     </div>
   </nav>
 </body>
-</html>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, onSnapshot } 
+    from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+  // Configuração do Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyDOOgPGQS6minWBynxF2D7AhGrlg8AM2-o",
+    authDomain: "appvendas-1e0e1.firebaseapp.com",
+    projectId: "appvendas-1e0e1",
+    storageBucket: "appvendas-1e0e1.firebasestorage.app",
+    messagingSenderId: "1049507415214",
+    appId: "1:1049507415214:web:dbfe6f19447012e86c193f"
+  };
+
+  // Iniciar Firebase + Firestore
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ====== FUNÇÃO PARA REGISTRAR VENDA ======
+  async function registrarVenda(produto, quantidade, valor) {
+    await addDoc(collection(db, "vendas"), {
+      produto,
+      quantidade,
+      valor,
+      data: new Date().toISOString()
+    });
+    console.log("Venda registrada!");
+  }
+
+  // ====== LISTAR EM TEMPO REAL ======
+  onSnapshot(collection(db, "vendas"), (snapshot) => {
+    console.log("Atualização recebida!");
+    snapshot.forEach(doc => {
+      console.log(doc.id, "=>", doc.data());
+    });
+  });
+
+  // Expor função para usar no botão HTML
+  window.registrarVenda = registrarVenda;
+</script>
